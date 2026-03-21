@@ -2116,8 +2116,8 @@ function PlayPageClient() {
       !detailData.episodes ||
       episodeIndex >= detailData.episodes.length
     ) {
-      // 这类源统一先走详情懒加载
-      if (isLazyDetailSource(detailData?.source)) {
+      // 这类源统一先走详情懒加载，如果 episodes 为空则跳过
+      if (isLazyDetailSource(detailData?.source) && (!detailData.episodes || detailData.episodes.length === 0)) {
         return;
       }
       setVideoUrl('');
@@ -3391,7 +3391,7 @@ function PlayPageClient() {
           detailData = target;
 
           // 这类源统一通过详情接口补全播放数据
-          if (isLazyDetailSource(detailData.source)) {
+          if (isLazyDetailSource(detailData.source) && (!detailData.episodes || detailData.episodes.length === 0)) {
             console.log('[Play] Fetching lazy detail for selected source...');
             // currentSource 已经是完整格式
             const detailSources = await fetchSourceDetail(currentSource, currentId, searchTitle || videoTitle);
@@ -3452,7 +3452,7 @@ function PlayPageClient() {
       console.log(detailData.source, detailData.id);
 
       // 这类源统一通过详情接口补全播放数据
-      if (isLazyDetailSource(detailData.source)) {
+      if (isLazyDetailSource(detailData.source) && (!detailData.episodes || detailData.episodes.length === 0)) {
         console.log('[Play] Fetching lazy detail after source selection...');
         const detailSources = await fetchSourceDetail(detailData.source, detailData.id, detailData.title || videoTitleRef.current);
         if (detailSources.length > 0) {
@@ -3769,7 +3769,7 @@ function PlayPageClient() {
       }
 
       // 这类源统一通过详情接口补全播放数据
-      if (isLazyDetailSource(newDetail.source)) {
+      if (isLazyDetailSource(newDetail.source) && (!newDetail.episodes || newDetail.episodes.length === 0)) {
         try {
           const detailResponse = await fetch(`/api/source-detail?source=${newSource}&id=${newId}&title=${encodeURIComponent(newTitle)}`);
           if (detailResponse.ok) {
@@ -5077,8 +5077,8 @@ function PlayPageClient() {
       return;
     }
 
-    // 这类源会先异步补全详情，这里先跳过
-    if (isLazyDetailSource(currentSource || detail?.source)) {
+    // 这类源会先异步补全详情，如果 episodes 为空则跳过
+    if (isLazyDetailSource(currentSource || detail?.source) && (!detail || !detail.episodes || detail.episodes.length === 0)) {
       return;
     }
 
